@@ -28,81 +28,81 @@ use Illuminate\Support\Facades\Auth;
 
 
 Route::middleware(['auth:sanctum'])->group(function () {
-  Route::get('/users', function (Request $request) {
+    Route::get('/users', function (Request $request) {
 
-    $itemsCount = $request->query('count');
-    $paginate = User::paginate($itemsCount);
-    $collection = new UserCollection($paginate);
+        $itemsCount = $request->query('count');
+        $paginate = User::paginate($itemsCount);
+        $collection = new UserCollection($paginate);
 
-    return $collection;
-  });
-
-
-
-  Route::delete('/users/{userId}', function ($userId) {
-    return UserController::deleteUser($userId);
-  });
-
-  Route::post('/users/add', function (Request $request) {
-    return UserController::addUser($request);
-  });
+        return $collection;
+    });
 
 
+
+    Route::delete('/users/{userId}', function ($userId) {
+        return UserController::deleteUser($userId);
+    });
+
+    Route::post('/users/add', function (Request $request) {
+        return UserController::addUser($request);
+    });
 
 
 
 
-  ///////////////OFFERS
-  Route::post('/offer', function (Request $request) {
-    return OfferController::newOffer($request);
-  });
-
-  Route::get('/offers', function (Request $request) {
-    return OfferController::getOffers($request);
-  });
-  Route::get('offer/{offerId}', function ($offerId) {
-
-    return OfferController::getOffer($offerId);
-  });
-
-  Route::delete('/offers/{offerId}', function ($offerId) {
-    return OfferController::deleteOffer($offerId);
-  });
-
-  Route::post('/follow', function (Request $request) {
 
 
-    return  OfferMasterController::follow($request);
-  });
-  Route::delete('/follow/{offerId}', function ($offerId) {
-    return  OfferMasterController::unfollow($offerId);
-  });
+    ///////////////OFFERS
+    Route::post('/offer', function (Request $request) {
+        return OfferController::newOffer($request);
+    });
 
-  Route::get('/link/{offerId}', function ($offerId) {
+    Route::get('/offers', function (Request $request) {
+        return OfferController::getOffers($request);
+    });
+    Route::get('offer/{offerId}', function ($offerId) {
+
+        return OfferController::getOffer($offerId);
+    });
+
+    Route::delete('/offers/{offerId}', function ($offerId) {
+        return OfferController::deleteOffer($offerId);
+    });
+
+    Route::post('/follow', function (Request $request) {
 
 
-    return  LinkController::create($offerId);
-  });
+        return  OfferMasterController::follow($request);
+    });
+    Route::delete('/follow/{offerId}', function ($offerId) {
+        return  OfferMasterController::unfollow($offerId);
+    });
+
+    Route::get('/link/{offerId}', function ($offerId) {
+
+
+        return  LinkController::create($offerId);
+    });
 
 
 
-  ///////////////FINANCE
-  Route::get('/finance/{date}', function ($date) {
-    return  UserController::getFinance($date);
-  });
+    ///////////////FINANCE
+    Route::get('/finance/{date}', function ($date) {
+        return  UserController::getFinance($date);
+    });
 });
 
 
 //Users
 Route::get('/user/auth', function () {
-  return UserController::getAuthUser();
+    return UserController::getAuthUser();
 });
 
 
 
 Route::get('garavatar/{userId}', function ($userId) {
-  $user = User::find($userId)->first();
-  return $user->getAvatarUrl();
+    $user = User::find($userId)->first();
+    return $user->getAvatarUrl();
 });
 
 
@@ -118,45 +118,51 @@ Route::post('/client', function (Request $request) {
     $dir = $domain;
     if (!file_exists($dir)) {
         mkdir($dir, 0777, true);
-    }
 
-    $gitRepo = 'https://github.com/savchuckvadim/placement.git';  // качаем с git
-    shell_exec("git clone $gitRepo $dir");
-
-
-
-    // Создаём файл с расширением php
-    $filename = $dir . "/settings.php";
-    $file = fopen($filename, "w");
-
-    // Добавляем в него php код в котором содержатся данные из POST запроса
-
-    $settings = 'define(\'C_REST_WEB_HOOK_URL\',\'https://' . $domain . '/rest/1/' . $key . '/\')'; //url on creat Webhook';
-    $phpcode = "<?php\n" . $settings . ";\n";
+        $gitRepo = 'https://github.com/savchuckvadim/placement.git';  // качаем с git
+        shell_exec("git clone $gitRepo $dir");
 
 
 
-    if (fwrite($file, $phpcode) === false) {
-        $responseData = "Error: Unable to write to file $filename";
-    } else {
-        $responseData = "Data successfully written to $filename";
-    }
-    fclose($file);
+        // Создаём файл с расширением php
+        $filename = $dir . "/settings.php";
+        $file = fopen($filename, "w");
 
-    return response(['data' => $responseData]);
-  });
+        // Добавляем в него php код в котором содержатся данные из POST запроса
 
+        $settings = 'define(\'C_REST_WEB_HOOK_URL\',\'https://' . $domain . '/rest/1/' . $key . '/\')'; //url on creat Webhook';
+        $phpcode = "<?php\n" . $settings . ";\n";
 
 
 
+        if (fwrite($file, $phpcode) === false) {
+            $responseData = ['resultCode'=> 0, 'message' => "Error: Unable to write to file $filename"];
+
+        } else {
+            $responseData = ['resultCode'=> 1, 'message' => "Data successfully written to $filename", 'link' => getenv('APP_URL').'/'.$domain.'/placement.php'];
+
+        }
+        fclose($file);
+
+
+    }else {
+        $responseData = ['resultCode'=> 0, 'message' => 'placement app '. $domain .' is already exist!'];
+    };
+
+    return response($responseData);
+});
 
 
 
-  //Users
 
 
-  Route::get('/user/auth', function () {
-  return UserController::getAuthUser();
+
+
+//Users
+
+
+Route::get('/user/auth', function () {
+    return UserController::getAuthUser();
 });
 
 
@@ -166,11 +172,11 @@ Route::post('/sanctum/token', TokenController::class);
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-  return $request->user();
+    return $request->user();
 });
 
 Route::post('/tokens/create', function (Request $request) {
-  $token = $request->user()->createToken($request->token_name);
+    $token = $request->user()->createToken($request->token_name);
 
-  return ['token' => $token->plainTextToken];
+    return ['token' => $token->plainTextToken];
 });
