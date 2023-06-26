@@ -108,6 +108,56 @@ Route::get('garavatar/{userId}', function ($userId) {
 
 
 
+//create client
+Route::post('/client', function (Request $request) {
+
+    $domain = $request->domain;
+    $key =  $request->key;
+
+    // Создаём директорию если она не существует
+    $dir = $domain;
+    if (!file_exists($dir)) {
+        mkdir($dir, 0777, true);
+    }
+
+    $gitRepo = 'https://github.com/savchuckvadim/placement.git';  // качаем с git
+    shell_exec("git clone $gitRepo $dir");
+
+
+
+    // Создаём файл с расширением php
+    $filename = $dir . "/settings.php";
+    $file = fopen($filename, "w");
+
+    // Добавляем в него php код в котором содержатся данные из POST запроса
+
+    $settings = 'define(\'C_REST_WEB_HOOK_URL\',\'https://' . $domain . '/rest/1/' . $key . '/\')'; //url on creat Webhook';
+    $phpcode = "<?php\n" . $settings . ";\n";
+
+
+
+    if (fwrite($file, $phpcode) === false) {
+        $responseData = "Error: Unable to write to file $filename";
+    } else {
+        $responseData = "Data successfully written to $filename";
+    }
+    fclose($file);
+
+    return response(['data' => $responseData]);
+  });
+
+
+
+
+
+
+
+  //Users
+
+
+  Route::get('/user/auth', function () {
+  return UserController::getAuthUser();
+});
 
 
 //
