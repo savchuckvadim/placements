@@ -38,7 +38,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
 
-
     Route::delete('/users/{userId}', function ($userId) {
         return UserController::deleteUser($userId);
     });
@@ -108,6 +107,13 @@ Route::get('garavatar/{userId}', function ($userId) {
 
 
 
+
+
+
+
+
+
+
 //create client
 Route::post('/client', function (Request $request) {
 
@@ -160,11 +166,11 @@ Route::get('/refresh/{isProd}', function ($isProd) {
     $results = [];
     foreach ($folders as $folder) {
         // Полный путь к папке
-        $full_path = $dir . "/" . $folder;
+        $full_path = "./" . $folder;
 
         // Проверяем, является ли элемент папкой и не является ли он служебной папкой . или ..
-        if (is_dir($full_path) && $folder != "." && $folder != "..") {
-            echo "Running git pull in $full_path\n";
+        if ((is_dir($full_path) && $folder != "." && $folder != ".." && $isProd == true) || ($folder =='april-garant.bitrix24.ru' && $isProd == false)) {
+            // echo "Running git pull in $full_path\n";
 
             // Меняем текущую рабочую директорию на папку, где нужно выполнить git pull
             chdir($full_path);
@@ -173,7 +179,7 @@ Route::get('/refresh/{isProd}', function ($isProd) {
             $output = shell_exec('git pull');
 
             // Выводим результат выполнения команды
-            array_push($resultFolresultsders, $output);
+            array_push($results, $output);
             array_push($resultFolders, $folder);
         }
     }
@@ -183,6 +189,19 @@ Route::get('/refresh/{isProd}', function ($isProd) {
 
     return response($responseData);
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
