@@ -136,24 +136,53 @@ Route::post('/client', function (Request $request) {
 
 
         if (fwrite($file, $phpcode) === false) {
-            $responseData = ['resultCode'=> 0, 'message' => "Error: Unable to write to file $filename"];
-
+            $responseData = ['resultCode' => 0, 'message' => "Error: Unable to write to file $filename"];
         } else {
-            $responseData = ['resultCode'=> 1, 'message' => "Data successfully written to $filename", 'link' => getenv('APP_URL').'/'.$domain.'/placement.php'];
-
+            $responseData = ['resultCode' => 1, 'message' => "Data successfully written to $filename", 'link' => getenv('APP_URL') . '/' . $domain . '/placement.php'];
         }
         fclose($file);
-
-
-    }else {
-        $responseData = ['resultCode'=> 0, 'message' => 'placement app '. $domain .' is already exist!'];
+    } else {
+        $responseData = ['resultCode' => 0, 'message' => 'placement app ' . $domain . ' is already exist!'];
     };
 
     return response($responseData);
 });
 
 
+Route::get('/refresh/{isProd}', function ($isProd) {
 
+
+    $dir = "./";
+
+    // Получаем список всех файлов и папок в данной директории
+    $folders = scandir($dir);
+    $resultFolders = [];
+    $results = [];
+    foreach ($folders as $folder) {
+        // Полный путь к папке
+        $full_path = $dir . "/" . $folder;
+
+        // Проверяем, является ли элемент папкой и не является ли он служебной папкой . или ..
+        if (is_dir($full_path) && $folder != "." && $folder != "..") {
+            echo "Running git pull in $full_path\n";
+
+            // Меняем текущую рабочую директорию на папку, где нужно выполнить git pull
+            chdir($full_path);
+
+            // Выполняем git pull
+            $output = shell_exec('git pull');
+
+            // Выводим результат выполнения команды
+            array_push($resultFolresultsders, $output);
+            array_push($resultFolders, $folder);
+        }
+    }
+    $responseData = ['resultCode' => 1, 'updatedFolders' => $resultFolders, 'outputs' => $results, 'isProd' => $isProd];
+
+
+
+    return response($responseData);
+});
 
 
 
