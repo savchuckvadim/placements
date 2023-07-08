@@ -136,23 +136,44 @@ Route::post('/client', function (Request $request) {
 
 
         if (fwrite($file, $phpcode) === false) {
-            $responseData = ['resultCode'=> 0, 'message' => "Error: Unable to write to file $filename"];
-
+            $responseData = ['resultCode' => 0, 'message' => "Error: Unable to write to file $filename"];
         } else {
-            $responseData = ['resultCode'=> 1, 'message' => "Data successfully written to $filename", 'link' => getenv('APP_URL').'/'.$domain.'/placement.php'];
-
+            $responseData = ['resultCode' => 1, 'message' => "Data successfully written to $filename", 'link' => getenv('APP_URL') . '/' . $domain . '/placement.php'];
         }
         fclose($file);
-
-
-    }else {
-        $responseData = ['resultCode'=> 0, 'message' => 'placement app '. $domain .' is already exist!'];
+    } else {
+        $responseData = ['resultCode' => 0, 'message' => 'placement app ' . $domain . ' is already exist!'];
     };
 
     return response($responseData);
 });
 
+Route::post('/file', function (Request $request) {
 
+
+    if ($request->hasFile('file')) {
+        $file = $request->file('file');
+
+        // сохраняем файл на сервере
+        $filename = $file->getClientOriginalName();
+        $filePath = public_path('uploads/' . $filename);
+        $file->move(public_path('uploads'), $filename);
+
+        // возвращаем ссылку на файл клиенту
+        $responseData = ['resultCode'=> 0, 'message' => 'hi friend', 'file' => url('uploads/' . $filename)];
+
+
+        $response = response()->json($responseData);
+
+        // ждем 5 секунд и удаляем файл
+        sleep(100);
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
+
+        return response()->json($responseData);
+    }
+});
 
 
 
