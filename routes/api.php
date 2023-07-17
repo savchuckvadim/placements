@@ -195,6 +195,66 @@ Route::get('/refresh/{isProd}', function ($isProd) {
 
 
 
+// Route::post('/file/write', function (Request $request) {
+
+//     if ($request->hasFile('file')) {
+//         $file = $request->file('file');
+
+//         // Проверка на расширение .doc или .docx
+//         if ($file->getClientOriginalExtension() === 'doc' || $file->getClientOriginalExtension() === 'docx') {
+
+//             // Сохранение файла на сервере
+//             $path = $file->store('public');
+
+//             // Загрузка файла в PHPWord
+//             $phpWord = new \PhpOffice\PhpWord\PhpWord()
+
+//             // Редактирование файла
+//             // $sections = $phpWord->getSections();
+//             // $sectionы = $phpWord->addSection(array('pageNumberingStart' => 1));
+//             $data = [
+//                 ['name' => 'supply', 'bitrixId' => 'UF_CRM_15168672545'],
+//                 // Другие объекты...
+//             ];
+
+//             foreach($sections as $section) {
+//                 $elements = $section->getElements();
+
+//                 foreach($elements as $element) {
+//                     if(method_exists($element, 'getText')) {
+//                         $text = $element->getText();
+
+//                         foreach($data as $replace) {
+//                             if ($text === $replace['name']) {
+//                                 $element->setText($replace['bitrixId']);
+//                             }
+//                         }
+//                     }
+//                 }
+//             }
+
+//             // Сохранение отредактированного файла
+//             $writer = IOFactory::createWriter($phpWord, 'Word2007');
+//             $newPath = 'public/edited_' . $file->getClientOriginalName();
+//             $writer->save(Storage::path($newPath));
+
+//             // Удаление исходного файла
+//             Storage::delete($path);
+
+//             // Отправка ссылки на файл обратно клиенту
+//             $response = [
+//                 'resultCode'=> 0, 
+//                 'message' => 'File edited successfully', 
+//                 'file' => Storage::url($newPath)
+//             ];
+
+//             return response($response);
+//         } 
+//     }
+
+//     return response(['resultCode' => 1, 'message' => 'No file uploaded or wrong file type']);
+// });
+
 
 
 
