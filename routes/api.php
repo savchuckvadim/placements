@@ -154,7 +154,7 @@ Route::post('/client', function (Request $request) {
     return response($responseData);
 });
 
-// Route::post('/file', function (Request $request) {})
+
 
 Route::get('/refresh/{isProd}', function ($isProd) {
     $responseData = ['resultCode' => 0,  'isProd' => $isProd];
