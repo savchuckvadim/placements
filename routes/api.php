@@ -156,9 +156,9 @@ Route::post('/client', function (Request $request) {
 
 // Route::post('/file', function (Request $request) {})
 
-Route::get('/refresh/{isProd}', function ($isProd) {
+Route::get('/refresh/{isProd}', function (Request $request) {
 
-
+    $isProd = $request->isProd;
     $dir = "./";
 
     // Получаем список всех файлов и папок в данной директории
