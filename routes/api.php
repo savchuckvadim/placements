@@ -177,10 +177,10 @@ Route::get('/refresh/{isProd}', function ($isProd) {
             // echo "Running git pull in $full_path\n";
 
             // Меняем текущую рабочую директорию на папку, где нужно выполнить git pull
-            chdir($full_path);
+            // chdir($full_path);
 
             // Выполняем git pull
-            $output = shell_exec('git pull');
+            $output = shell_exec("git -C {$full_path} pull");
 
             // Выводим результат выполнения команды
             array_push($results, $output);
