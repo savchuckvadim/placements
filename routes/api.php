@@ -156,7 +156,7 @@ Route::post('/client', function (Request $request) {
 
 // Route::post('/file', function (Request $request) {})
 
-Route::get('/refresh/{isProd}', function (Request $request) {
+Route::post('/refresh', function (Request $request) {
 
     $isProd = $request->isProd;
     $dir = "./";
