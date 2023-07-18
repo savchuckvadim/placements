@@ -157,7 +157,7 @@ Route::post('/client', function (Request $request) {
 // Route::post('/file', function (Request $request) {})
 
 Route::get('/refresh/{isProd}', function ($isProd) {
-   
+
 
     $dir = "./";
 
@@ -165,12 +165,15 @@ Route::get('/refresh/{isProd}', function ($isProd) {
     $folders = scandir($dir);
     $resultFolders = [];
     $results = [];
+    $count = 0;
+    $fldrsPaths = [];
     foreach ($folders as $folder) {
         // Полный путь к папке
         $full_path = "./" . $folder;
-
+        $count++;
+        array_push($fldrsPaths, $full_path);
         // Проверяем, является ли элемент папкой и не является ли он служебной папкой . или ..
-        if ((is_dir($full_path) && $folder != "." && $folder != ".." && $isProd == true) || ($folder =='april-garant.bitrix24.ru' && $isProd == false)) {
+        if ((is_dir($full_path) && $folder != "." && $folder != ".." && $isProd == true) || ($folder == 'april-garant.bitrix24.ru' && $isProd == false)) {
             // echo "Running git pull in $full_path\n";
 
             // Меняем текущую рабочую директорию на папку, где нужно выполнить git pull
@@ -184,7 +187,13 @@ Route::get('/refresh/{isProd}', function ($isProd) {
             array_push($resultFolders, $folder);
         }
     }
-    $responseData = ['resultCode' => 0, 'updatedFolders' => $resultFolders, 'outputs' => $results, 'isProd' => $isProd];
+    $responseData = [
+        'resultCode' => 0,
+        'updatedFolders' => $resultFolders,
+        'outputs' => $results,
+        'isProd' => $isProd,
+        'allFolders' => $folders
+    ];
 
 
 
@@ -272,7 +281,7 @@ Route::post('/file', function (Request $request) {
         $file->move(public_path('uploads'), $filename);
 
         // возвращаем ссылку на файл клиенту
-        $responseData = ['resultCode'=> 0, 'message' => 'hi friend', 'file' => url('uploads/' . $filename)];
+        $responseData = ['resultCode' => 0, 'message' => 'hi friend', 'file' => url('uploads/' . $filename)];
 
 
         $response = response()->json($responseData);
