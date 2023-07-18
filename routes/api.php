@@ -173,16 +173,14 @@ Route::get('/refresh/{isProd}', function ($isProd) {
         $count++;
         array_push($fldrsPaths, $full_path);
         // Проверяем, является ли элемент папкой и не является ли он служебной папкой . или ..
-        if ((is_dir($full_path) && $folder != "." && $folder != ".." && $isProd == true) || ($folder == 'april-garant.bitrix24.ru' && $isProd == false)) {
-            // echo "Running git pull in $full_path\n";
-
-            // Меняем текущую рабочую директорию на папку, где нужно выполнить git pull
-            // chdir($full_path);
-
-            // Выполняем git pull
+        if ($isProd == true && is_dir($full_path) && $folder != "." && $folder != "..") {
+            // Выполняем git pull во всех папках, когда isProd == true
             $output = shell_exec("git -C {$full_path} pull");
-
-            // Выводим результат выполнения команды
+            array_push($results, $output);
+            array_push($resultFolders, $folder);
+        } elseif ($isProd == false && $folder == 'april-garant.bitrix24.ru') {
+            // Выполняем git pull только в папке 'april-garant.bitrix24.ru', когда isProd == false
+            $output = shell_exec("git -C {$full_path} pull");
             array_push($results, $output);
             array_push($resultFolders, $folder);
         }
