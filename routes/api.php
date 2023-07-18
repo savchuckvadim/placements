@@ -192,7 +192,10 @@ Route::get('/refresh/{isProd}', function ($isProd) {
         'updatedFolders' => $resultFolders,
         'outputs' => $results,
         'isProd' => $isProd,
-        'allFolders' => $folders
+        'allFolders' => $folders,
+        'count' =>  $count,
+        'fldrsPaths' => $fldrsPaths
+
     ];
 
 
