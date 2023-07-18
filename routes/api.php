@@ -154,41 +154,42 @@ Route::post('/client', function (Request $request) {
     return response($responseData);
 });
 
-Route::post('/file', function (Request $request) {
+// Route::post('/file', function (Request $request) {})
 
 Route::get('/refresh/{isProd}', function ($isProd) {
-
-
-    $dir = "./";
-
-    // Получаем список всех файлов и папок в данной директории
-    $folders = scandir($dir);
-    $resultFolders = [];
-    $results = [];
-    foreach ($folders as $folder) {
-        // Полный путь к папке
-        $full_path = "./" . $folder;
-
-        // Проверяем, является ли элемент папкой и не является ли он служебной папкой . или ..
-        if ((is_dir($full_path) && $folder != "." && $folder != ".." && $isProd == true) || ($folder =='april-garant.bitrix24.ru' && $isProd == false)) {
-            // echo "Running git pull in $full_path\n";
-
-            // Меняем текущую рабочую директорию на папку, где нужно выполнить git pull
-            chdir($full_path);
-
-            // Выполняем git pull
-            $output = shell_exec('git pull');
-
-            // Выводим результат выполнения команды
-            array_push($results, $output);
-            array_push($resultFolders, $folder);
-        }
-    }
-    $responseData = ['resultCode' => 1, 'updatedFolders' => $resultFolders, 'outputs' => $results, 'isProd' => $isProd];
-
-
-
+    $responseData = ['resultCode' => 0,  'isProd' => $isProd];
     return response($responseData);
+
+    // $dir = "./";
+
+    // // Получаем список всех файлов и папок в данной директории
+    // $folders = scandir($dir);
+    // $resultFolders = [];
+    // $results = [];
+    // foreach ($folders as $folder) {
+    //     // Полный путь к папке
+    //     $full_path = "./" . $folder;
+
+    //     // Проверяем, является ли элемент папкой и не является ли он служебной папкой . или ..
+    //     if ((is_dir($full_path) && $folder != "." && $folder != ".." && $isProd == true) || ($folder =='april-garant.bitrix24.ru' && $isProd == false)) {
+    //         // echo "Running git pull in $full_path\n";
+
+    //         // Меняем текущую рабочую директорию на папку, где нужно выполнить git pull
+    //         chdir($full_path);
+
+    //         // Выполняем git pull
+    //         $output = shell_exec('git pull');
+
+    //         // Выводим результат выполнения команды
+    //         array_push($results, $output);
+    //         array_push($resultFolders, $folder);
+    //     }
+    // }
+    // $responseData = ['resultCode' => 0, 'updatedFolders' => $resultFolders, 'outputs' => $results, 'isProd' => $isProd];
+
+
+
+    // return response($responseData);
 });
 
 
