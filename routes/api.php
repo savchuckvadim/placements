@@ -1,6 +1,6 @@
 <?php
 
-
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\LinkController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\OfferMasterController;
@@ -173,12 +173,12 @@ Route::post('/refresh', function (Request $request) {
         $count++;
         array_push($fldrsPaths, $full_path);
         // Проверяем, является ли элемент папкой и не является ли он служебной папкой . или ..
-        if ($isProd == true && is_dir($full_path) && $folder != "." && $folder != "..") {
+        if ($isProd == true && $folder == 'client') {
             // Выполняем git pull во всех папках, когда isProd == true
             $output = shell_exec("git -C {$full_path} pull");
             array_push($results, $output);
             array_push($resultFolders, $folder);
-        } elseif ($isProd == false && $folder == 'april-garant.bitrix24.ru') {
+        } elseif ($isProd == false && $folder == 'test') {
             // Выполняем git pull только в папке 'april-garant.bitrix24.ru', когда isProd == false
             $output = shell_exec("git -C {$full_path} pull");
             array_push($results, $output);
@@ -265,7 +265,9 @@ Route::post('/refresh', function (Request $request) {
 //     return response(['resultCode' => 1, 'message' => 'No file uploaded or wrong file type']);
 // });
 
-
+Route::post('file/createAprilTemplate', function (Request $request) {
+    return FileController::processFields($request);
+});
 
 
 
@@ -275,6 +277,7 @@ Route::post('/file', function (Request $request) {
 
     if ($request->hasFile('file')) {
         $file = $request->file('file');
+        // $domain = $request->file('file');
 
         // сохраняем файл на сервере
         $filename = $file->getClientOriginalName();
