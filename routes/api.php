@@ -173,7 +173,7 @@ Route::post('/refresh', function (Request $request) {
         $count++;
         array_push($fldrsPaths, $full_path);
         // Проверяем, является ли элемент папкой и не является ли он служебной папкой . или ..
-        if ($isProd == true && $folder == 'client') {
+        if ($isProd == true && ($folder == 'client' || $folder == 'public')) {
             // Выполняем git pull во всех папках, когда isProd == true
             $output = shell_exec("git -C {$full_path} pull");
             array_push($results, $output);
