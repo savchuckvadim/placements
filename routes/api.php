@@ -166,6 +166,7 @@ Route::post('/refresh', function (Request $request) {
     $results = [];
     $count = 0;
     $fldrsPaths = [];
+
     foreach ($folders as $folder) {
         // Полный путь к папке
         $full_path = "./" . $folder;
@@ -193,7 +194,7 @@ Route::post('/refresh', function (Request $request) {
         'resultCode' => 0,
         'updatedFolders' => $resultFolders,
         'outputs' => $results,
-        'isProd' => $isProd,
+
         'allFolders' => $folders,
         'count' =>  $count,
         'fldrsPaths' => $fldrsPaths
