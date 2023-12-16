@@ -147,6 +147,7 @@ Route::post('/refresh', function (Request $request) {
     }
     $responseData = [
         'resultCode' => 0,
+        'message' => 'new updating',
         'updatedFolders' => $resultFolders,
         'outputs' => $results,
 
