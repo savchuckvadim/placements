@@ -24,8 +24,7 @@ use Illuminate\Support\Facades\Route;
 */
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-
-
+use Illuminate\Support\Facades\Storage;
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/users', function (Request $request) {
@@ -158,7 +157,7 @@ Route::post('/client', function (Request $request) {
 
 Route::post('/refresh', function (Request $request) {
 
-    $isProd = $request->isProd;
+    $type = $request->type; // 'client' | 'test' | 'dev'
     $dir = "./";
 
     // Получаем список всех файлов и папок в данной директории
@@ -167,19 +166,25 @@ Route::post('/refresh', function (Request $request) {
     $results = [];
     $count = 0;
     $fldrsPaths = [];
+
     foreach ($folders as $folder) {
         // Полный путь к папке
         $full_path = "./" . $folder;
         $count++;
         array_push($fldrsPaths, $full_path);
         // Проверяем, является ли элемент папкой и не является ли он служебной папкой . или ..
-        if ($isProd == true && ($folder == 'client' || $folder == 'public')) {
+        if ($type == 'client' && ($folder == 'client' || $folder == 'public')) {
             // Выполняем git pull во всех папках, когда isProd == true
             $output = shell_exec("git -C {$full_path} pull");
             array_push($results, $output);
             array_push($resultFolders, $folder);
-        } elseif ($isProd == false && $folder == 'test') {
-            // Выполняем git pull только в папке 'april-garant.bitrix24.ru', когда isProd == false
+        } else if ($type == 'test' && $folder == 'test') {
+            
+            $output = shell_exec("git -C {$full_path} pull");
+            array_push($results, $output);
+            array_push($resultFolders, $folder);
+        } else if ($type == 'dev' && $folder == 'dev') {
+          
             $output = shell_exec("git -C {$full_path} pull");
             array_push($results, $output);
             array_push($resultFolders, $folder);
@@ -189,7 +194,7 @@ Route::post('/refresh', function (Request $request) {
         'resultCode' => 0,
         'updatedFolders' => $resultFolders,
         'outputs' => $results,
-        'isProd' => $isProd,
+
         'allFolders' => $folders,
         'count' =>  $count,
         'fldrsPaths' => $fldrsPaths
@@ -265,7 +270,7 @@ Route::post('/refresh', function (Request $request) {
 //     return response(['resultCode' => 1, 'message' => 'No file uploaded or wrong file type']);
 // });
 
-Route::post('file/createAprilTemplate', function (Request $request) {
+Route::post('createAprilTemplate', function (Request $request) {
     return FileController::processFields($request);
 });
 
@@ -281,20 +286,26 @@ Route::post('/file', function (Request $request) {
 
         // сохраняем файл на сервере
         $filename = $file->getClientOriginalName();
-        $filePath = public_path('uploads/' . $filename);
-        $file->move(public_path('uploads'), $filename);
+        // $filePath = public_path('uploads/' . $filename);
+        // $file->move(public_path('uploads'), $filename);
 
         // возвращаем ссылку на файл клиенту
-        $responseData = ['resultCode' => 0, 'message' => 'hi friend', 'file' => url('uploads/' . $filename)];
+        // $responseData = ['resultCode' => 0, 'message' => 'hi friend', 'file' => url('uploads/' . $filename)];
+        // $path = $request->file('file')->store('test');
 
 
-        $response = response()->json($responseData);
+        // Storage::disk('public')->put($filename, 'test');
+        $path = $file->storeAs('public', $filename);
+
+
+        $responseData = ['resultCode' => 0, 'message' => 'hi friend', 'fileName' => $filename];
+        // $response = response()->json($responseData);
 
         // ждем 5 секунд и удаляем файл
-        sleep(100);
-        if (file_exists($filePath)) {
-            unlink($filePath);
-        }
+        // sleep(100);
+        // if (file_exists($filePath)) {
+        //     unlink($filePath);
+        // }
 
         return response()->json($responseData);
     }
