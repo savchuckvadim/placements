@@ -37,13 +37,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
 
-    Route::delete('/users/{userId}', function ($userId) {
-        return UserController::deleteUser($userId);
-    });
 
-    Route::post('/users/add', function (Request $request) {
-        return UserController::addUser($request);
-    });
 
 
 
