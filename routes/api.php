@@ -153,7 +153,7 @@ Route::post('/client', function (Request $request) {
     return response($responseData);
 });
 
-// Route::post('/file', function (Request $request) {})
+
 
 Route::post('/refresh', function (Request $request) {
 
@@ -178,6 +178,8 @@ Route::post('/refresh', function (Request $request) {
             $output = shell_exec("git -C {$full_path} pull");
             array_push($results, $output);
             array_push($resultFolders, $folder);
+
+
         } else if ($type == 'test' && $folder == 'test') {
             
             $output = shell_exec("git -C {$full_path} pull");
