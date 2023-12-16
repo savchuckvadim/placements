@@ -47,47 +47,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 
 
-
-
-
-    ///////////////OFFERS
-    Route::post('/offer', function (Request $request) {
-        return OfferController::newOffer($request);
-    });
-
-    Route::get('/offers', function (Request $request) {
-        return OfferController::getOffers($request);
-    });
-    Route::get('offer/{offerId}', function ($offerId) {
-
-        return OfferController::getOffer($offerId);
-    });
-
-    Route::delete('/offers/{offerId}', function ($offerId) {
-        return OfferController::deleteOffer($offerId);
-    });
-
-    Route::post('/follow', function (Request $request) {
-
-
-        return  OfferMasterController::follow($request);
-    });
-    Route::delete('/follow/{offerId}', function ($offerId) {
-        return  OfferMasterController::unfollow($offerId);
-    });
-
-    Route::get('/link/{offerId}', function ($offerId) {
-
-
-        return  LinkController::create($offerId);
-    });
-
-
-
-    ///////////////FINANCE
-    Route::get('/finance/{date}', function ($date) {
-        return  UserController::getFinance($date);
-    });
 });
 
 
