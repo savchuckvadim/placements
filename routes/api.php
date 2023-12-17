@@ -1,9 +1,6 @@
 <?php
 
 use App\Http\Controllers\FileController;
-use App\Http\Controllers\LinkController;
-use App\Http\Controllers\OfferController;
-use App\Http\Controllers\OfferMasterController;
 use App\Http\Controllers\TokenController;
 use App\Http\Controllers\UserController;
 use App\Http\Resources\UserCollection;
@@ -23,8 +20,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/users', function (Request $request) {
@@ -127,7 +123,7 @@ Route::post('/refresh', function (Request $request) {
         array_push($fldrsPaths, $full_path);
         // Проверяем, является ли элемент папкой и не является ли он служебной папкой . или ..
         if ($type == 'client' && ($folder == 'client' || $folder == 'public')) {
-            // Выполняем git pull во всех папках, когда isProd == true
+         
             $output = shell_exec("git -C {$full_path} pull");
             array_push($results, $output);
             array_push($resultFolders, $folder);
