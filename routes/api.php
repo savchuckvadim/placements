@@ -135,8 +135,8 @@ Route::post('/refresh', function (Request $request) {
             array_push($results, $output);
             array_push($resultFolders, $folder);
         } else if ($type == 'dev' && $folder == 'dev') {
-          
-            $output = shell_exec("git -C {$full_path} pull");
+            Log::info('DEV', $folder);
+            $output = shell_exec("sudo git -C {$full_path} pull");
             array_push($results, $output);
             array_push($resultFolders, $folder);
         }
@@ -147,9 +147,9 @@ Route::post('/refresh', function (Request $request) {
         'updatedFolders' => $resultFolders,
         'outputs' => $results,
 
-        'allFolders' => $folders,
+        // 'allFolders' => $folders,
         'count' =>  $count,
-        'fldrsPaths' => $fldrsPaths
+        // 'fldrsPaths' => $fldrsPaths
 
     ];
 
