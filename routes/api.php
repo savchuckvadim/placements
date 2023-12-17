@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 use App\Models\User;
-
+use Illuminate\Support\Facades\Log;
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/users', function (Request $request) {
@@ -105,10 +105,10 @@ Route::post('/client', function (Request $request) {
 
 
 Route::post('/refresh', function (Request $request) {
-
+    Log::info('LOG', $request->all());
     $type = $request->type; // 'client' | 'test' | 'dev'
     $dir = "./";
-
+    Log::info('TYPE', ['type' => $type]);
     // Получаем список всех файлов и папок в данной директории
     $folders = scandir($dir);
     $resultFolders = [];
