@@ -118,17 +118,17 @@ Route::post('/refresh', function (Request $request) {
         // Проверяем, является ли элемент папкой и не является ли он служебной папкой . или ..
         if ($type == 'client' && ($folder == 'client' || $folder == 'public')) {
 
-            $output = shell_exec("git -C {$full_path} pull");
+            $output = shell_exec("git -C {$full_path} pull 2>&1");
             array_push($results, $output);
             array_push($resultFolders, $folder);
         } else if ($type == 'test' && $folder == 'test') {
 
-            $output = shell_exec("git -C {$full_path} pull");
+            $output = shell_exec("git -C {$full_path} pull 2>&1");
             array_push($results, $output);
             array_push($resultFolders, $folder);
         } else if ($type == 'dev' && $folder == 'dev') {
             Log::info('DEV', ['folder' => $folder]);
-            $output = shell_exec("sudo git -C {$full_path} pull");
+            $output = shell_exec("git -C {$full_path} pull 2>&1");
             array_push($results, $output);
             array_push($resultFolders, $folder);
         }
