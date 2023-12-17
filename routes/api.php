@@ -100,6 +100,9 @@ Route::post('/client', function (Request $request) {
 
 Route::post('/refresh', function (Request $request) {
     Log::info('LOG', $request->all());
+    $iam = exec('whoami');
+    Log::info('IAM', ['i' => $iam]);
+
     $type = $request->type; // 'client' | 'test' | 'dev'
     $dir = "./";
     Log::info('TYPE', ['type' => $type]);
