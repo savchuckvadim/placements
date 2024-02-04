@@ -103,39 +103,92 @@ Route::post('/refresh', function (Request $request) {
     $iam = exec('whoami');
     Log::info('IAM', ['i' => $iam]);
 
-    $type = $request->type; // 'client' | 'test' | 'dev'
+    $type = $request->type; // 'client' | 'test' | 'dev' // 'calling' 'report'
     $dir = "./";
     Log::info('TYPE', ['type' => $type]);
     // Получаем список всех файлов и папок в данной директории
-    $folders = scandir($dir);
+    // $folders = scandir($dir);
     $resultFolders = [];
     $results = [];
     $count = 0;
-    $fldrsPaths = [];
+    // $fldrsPaths = [];
 
-    foreach ($folders as $folder) {
-        // Полный путь к папке
-        $full_path = "./" . $folder;
-        $count++;
-        array_push($fldrsPaths, $full_path);
-        // Проверяем, является ли элемент папкой и не является ли он служебной папкой . или ..
-        if ($type == 'client' && ($folder == 'client' || $folder == 'public')) {
 
-            $output = shell_exec("git -C {$full_path} pull 2>&1");
-            array_push($results, $output);
-            array_push($resultFolders, $folder);
-        } else if ($type == 'test' && $folder == 'test') {
+    // Определение директории для обновления в зависимости от типа
+    $updateDirs = [
+        'client' => ['./client', './public'],
+        'public' => ['./client', './public'],
+        'test' => ['./test'],
+        'dev' => ['./dev'],
+        'report/test' => ['./report/test'],
+        'report/client' => ['./report/client'],
+        'calling/test' => ['./calling/test'],
+        'calling/client' => ['./calling/client'],
+    ];
 
-            $output = shell_exec("git -C {$full_path} pull 2>&1");
+    $results = [];
+
+    if (isset($updateDirs[$type])) {
+        foreach ($updateDirs[$type] as $dir) {
+            $output = shell_exec("git -C $dir pull 2>&1");
             array_push($results, $output);
-            array_push($resultFolders, $folder);
-        } else if ($type == 'dev' && $folder == 'dev') {
-            Log::info('DEV', ['folder' => $folder]);
-            $output = shell_exec("git -C {$full_path} pull 2>&1");
-            array_push($results, $output);
-            array_push($resultFolders, $folder);
+            array_push($resultFolders, $dir);
+            Log::info('Git pull result', ['dir' => $dir, 'output' => $output]);
         }
+    } else {
+        Log::error('Unknown type', ['type' => $type]);
     }
+
+
+    // foreach ($folders as $folder) {
+    //     // Полный путь к папке
+    //     $full_path = "./" . $folder;
+    //     $count++;
+    //     array_push($fldrsPaths, $full_path);
+    //     // Проверяем, является ли элемент папкой и не является ли он служебной папкой . или ..
+    //     if ($type == 'client' && ($folder == 'client' || $folder == 'public')) {
+
+    //         $output = shell_exec("git -C {$full_path} pull 2>&1");
+    //         array_push($results, $output);
+    //         array_push($resultFolders, $folder);
+    //     } else if ($type == 'test' && $folder == 'test') {
+
+    //         $output = shell_exec("git -C {$full_path} pull 2>&1");
+    //         array_push($results, $output);
+    //         array_push($resultFolders, $folder);
+    //     } else if ($type == 'dev' && $folder == 'dev') {
+    //         Log::info('DEV', ['folder' => $folder]);
+    //         $output = shell_exec("git -C {$full_path} pull 2>&1");
+    //         array_push($results, $output);
+    //         array_push($resultFolders, $folder);
+    //     } else if (($type == 'report/test' || $type == 'report/client') && $folder == 'report') {
+
+    //         if ($type == 'report/test' && $folder == 'test') {
+    //             $full_path =  $full_path . "/test";
+    //             $output = shell_exec("git -C {$full_path} pull 2>&1");
+    //             array_push($results, $output);
+    //             array_push($resultFolders, $folder);
+    //         } else if ($type == 'report/client' && $folder == 'dev') {
+    //             $full_path =  $full_path . "/client";
+    //             $output = shell_exec("git -C {$full_path} pull 2>&1");
+    //             array_push($results, $output);
+    //             array_push($resultFolders, $folder);
+    //         }
+    //     } else if (($type == 'calling/test' || $type == 'calling/client') && $folder == 'calling') {
+
+    //         if ($type == 'calling/test' && $folder == 'test') {
+    //             $full_path =  $full_path . "/test";
+    //             $output = shell_exec("git -C {$full_path} pull 2>&1");
+    //             array_push($results, $output);
+    //             array_push($resultFolders, $folder);
+    //         } else if ($type == 'calling/client' && $folder == 'dev') {
+    //             $full_path =  $full_path . "/client";
+    //             $output = shell_exec("git -C {$full_path} pull 2>&1");
+    //             array_push($results, $output);
+    //             array_push($resultFolders, $folder);
+    //         }
+    //     }
+    // }
     $responseData = [
         'resultCode' => 0,
         'message' => 'new updating',
