@@ -130,7 +130,7 @@ Route::post('/refresh', function (Request $request) {
 
     if (isset($updateDirs[$type])) {
         foreach ($updateDirs[$type] as $dir) {
-            $output = shell_exec("sudo git -C $dir pull 2>&1");
+            $output = shell_exec("git -C $dir pull 2>&1");
             array_push($results, $output);
             array_push($resultFolders, $dir);
             Log::info('Git pull result', ['dir' => $dir, 'output' => $output]);
