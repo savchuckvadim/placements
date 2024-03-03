@@ -116,8 +116,8 @@ Route::post('/refresh', function (Request $request) {
 
     // Определение директории для обновления в зависимости от типа
     $updateDirs = [
-        'client' => ['./client', './public'],
-        'public' => ['./client', './public'],
+        'client' => ['./client'],
+        'public' => ['./public'],
         'test' => ['./test'],
         'dev' => ['./dev'],
         'report/test' => ['./report/test'],
